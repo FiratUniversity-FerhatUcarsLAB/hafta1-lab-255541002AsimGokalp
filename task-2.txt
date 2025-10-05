@@ -1,4 +1,102 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 25541002
+AD-SOYAD: ASIM GÖKALP
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+Görev-2 optimum market alışverişi
+ALGORITMA: GELISTIRILMIS_OPTIMUM_BUTCELI_MARKET_ALISVERISI
+
+Girdi:
+    ürünListesi = [{isim, kategori, fiyat, indirim, öncelik, zorunluMu, alternatifler}]
+    bütçe = B
+    kullanıcıTipi = "dengeli"  # veya "sağlık odaklı", "tasarruf odaklı"
+
+Çıktı:
+    seçilenÜrünler, toplamFiyat, toplamFayda, kalanBütçe
+
+ADIM 1: Başlat
+    toplamFiyat ← 0
+    toplamFayda ← 0
+    seçilenÜrünler ← []
+
+ADIM 2: Zorunlu ürünleri işle
+    FOR ürün IN ürünListesi:
+        IF ürün.zorunluMu == TRUE THEN
+            ürün.gerçekFiyat ← ürün.fiyat * (1 - ürün.indirim / 100)
+            IF toplamFiyat + ürün.gerçekFiyat ≤ bütçe THEN
+                seçilenÜrünler’e ekle(ürün)
+                toplamFiyat += ürün.gerçekFiyat
+                toplamFayda += ürün.öncelik
+            ELSE
+                YAZ "Zorunlu ürün için bütçe yetersiz: " + ürün.isim
+                uygunAlternatif ← EN_UYGUN_ALTERNATIF(ürün, ürünListesi)
+                IF uygunAlternatif VAR THEN
+                    seçilenÜrünler’e ekle(uygunAlternatif)
+                    toplamFiyat += uygunAlternatif.gerçekFiyat
+                    toplamFayda += uygunAlternatif.öncelik
+                ELSE
+                    YAZ "Alternatif bulunamadı, atlanıyor."
+                END IF
+            END IF
+        END IF
+    END FOR
+
+ADIM 3: İndirimleri uygula ve fayda oranlarını hesapla
+    FOR ürün IN ürünListesi:
+        ürün.gerçekFiyat ← ürün.fiyat * (1 - ürün.indirim / 100)
+        ürün.faydaOranı ← ürün.öncelik / ürün.gerçekFiyat
+
+        IF kullanıcıTipi == "sağlık odaklı" AND ürün.kategori == "gıda" THEN
+            ürün.faydaOranı ← ürün.faydaOranı * 1.2
+        ELSE IF kullanıcıTipi == "tasarruf odaklı" THEN
+            ürün.faydaOranı ← ürün.faydaOranı * (1 / ürün.gerçekFiyat)
+        END IF
+    END FOR
+
+ADIM 4: Ürünleri azalan faydaOranı’na göre sırala
+
+ADIM 5: Sepeti oluştur
+    kategoriSayacı ← {"gıda":0, "temizlik":0, "kişisel":0}
+    FOR ürün IN ürünListesi:
+        IF ürün.zorunluMu == FALSE THEN
+            IF toplamFiyat + ürün.gerçekFiyat ≤ bütçe THEN
+                # Kategori dengesi kontrolü
+                IF kategoriSayacı[ürün.kategori] < 3 THEN
+                    seçilenÜrünler’e ekle(ürün)
+                    kategoriSayacı[ürün.kategori] += 1
+                    toplamFiyat += ürün.gerçekFiyat
+                    toplamFayda += ürün.öncelik
+                END IF
+            ELSE
+                YAZ "Bütçe aşıldı, alternatif aranıyor..."
+                alternatif ← EN_UYGUN_ALTERNATIF(ürün, ürünListesi)
+                IF alternatif VAR AND toplamFiyat + alternatif.gerçekFiyat ≤ bütçe THEN
+                    seçilenÜrünler’e ekle(alternatif)
+                    toplamFiyat += alternatif.gerçekFiyat
+                    toplamFayda += alternatif.öncelik
+                END IF
+            END IF
+        END IF
+    END FOR
+
+ADIM 6: Kalan bütçeyi kontrol et
+    kalanBütçe ← bütçe - toplamFiyat
+    IF kalanBütçe > 0.1 * bütçe THEN
+        YAZ "Kalan bütçe ile küçük ürün önerileri aranıyor..."
+        öneriler ← KÜÇÜK_ÜRÜNLER(ürünListesi, kalanBütçe)
+        FOR öneri IN öneriler:
+            IF toplamFiyat + öneri.gerçekFiyat ≤ bütçe THEN
+                seçilenÜrünler’e ekle(öneri)
+                toplamFiyat += öneri.gerçekFiyat
+                toplamFayda += öneri.öncelik
+            END IF
+        END FOR
+    END IF
+
+ADIM 7: Sonuçları döndür
+    YAZ "Seçilen Ürünler:", seçilenÜrünler
+    YAZ "Toplam Fiyat:", toplamFiyat
+    YAZ "Toplam Fayda:", toplamFayda
+    YAZ "Kalan Bütçe:", kalanBütçe
+    YAZ "Kategori Dağılımı:", kategoriSayacı
+
+BİTİR
