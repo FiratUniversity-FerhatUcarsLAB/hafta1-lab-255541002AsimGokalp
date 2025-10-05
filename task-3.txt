@@ -1,4 +1,52 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 25541002
+AD-SOYAD: ASIM GÖKALP
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+Görev-3 Kütühanede kitap arama sistemi
+ALGORITMA: AKILLI_KUTUPHANE_ARAMA_SISTEMI
+
+Girdi:
+    kutuphane[]
+    aramaTerimi
+    aramaKriterleri[]   # örn. ["ad", "yazar"]
+    siralamaKriteri     # "ad", "yazar", "populerlik", "yil"
+    esikBenzerlik       # benzerlik eşiği, örn. 0.6
+
+Çıktı:
+    bulunanKitaplar[], önerilenKitaplar[]
+
+ADIM 1: Veri Ön İşleme
+    EĞER kutuphane boş ise
+        YAZ "Kütüphane verisi bulunamadı."
+        ÇIKIŞ
+
+    # Kullanıcının seçtiği kritere göre sıralama yap
+    kutuphane ← SIRALA_AKILLI(kutuphane, siralamaKriteri)
+
+ADIM 2: Çok Kriterli Arama
+    bulunanKitaplar ← []
+    FOR kitap IN kutuphane:
+        eşleşmeSkoru ← 0
+        FOR kriter IN aramaKriterleri:
+            benzerlik ← BENZERLIK_HESAPLA(kitap[kriter], aramaTerimi)
+            eşleşmeSkoru ← eşleşmeSkoru + benzerlik
+        EĞER eşleşmeSkoru / uzunluk(aramaKriterleri) ≥ esikBenzerlik:
+            bulunanKitaplar’e ekle(kitap)
+
+ADIM 3: Sonuç Kontrolü
+    EĞER bulunanKitaplar boş değilse:
+        YAZ "Aranan kitap(lar) bulundu:"
+        YAZ bulunanKitaplar
+    DEĞİLSE:
+        YAZ "Tam eşleşme yok. En benzer kitaplar listeleniyor..."
+        benzerKitaplar ← EN_YAKIN_ESLESMELER(kutuphane, aramaTerimi, aramaKriterleri)
+        YAZ benzerKitaplar
+
+ADIM 4: Akıllı Öneri Sistemi
+    EĞER bulunanKitaplar boş değilse:
+        kategori ← bulunanKitaplar[0].kategori
+        önerilenKitaplar ← ONERI_OLUSTUR(kutuphane, kategori)
+        YAZ "Benzer öneriler:"
+        YAZ önerilenKitaplar
+
+ADIM 5: BİTİR
