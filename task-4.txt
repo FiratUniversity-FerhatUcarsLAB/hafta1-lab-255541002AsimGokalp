@@ -1,4 +1,51 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 25541002
+AD-SOYAD: ASIM GÖKALP
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+Görev-4 Renkleri karıştırarak hedef rengi elde etme.
+ALGORITMA: GELISMIS_RENK_KARISTIRMA_OPTIMIZE
+
+Girdi:
+    renkListesi = [(R,G,B), ...]
+    hedef = (Rh, Gh, Bh)
+    maxKarisimSayisi = 3
+    hataEşiği = 3.0
+    maxIterasyon = 1000
+
+Çıktı:
+    enIyiKarisim = [(renk1, oran1), (renk2, oran2), (renk3, oran3)]
+    enKucukHata
+
+ADIM 1: Başlat
+    enKucukHata ← sonsuz
+    enIyiKarisim ← NULL
+
+ADIM 2: Akıllı Başlangıç
+    başlangıçRenk ← EN_YAKIN_RENK(renkListesi, hedef)
+    geçerliKarisim ← [(başlangıçRenk, 1.0)]
+
+ADIM 3: İteratif Optimizasyon Döngüsü
+    FOR iter IN 1..maxIterasyon:
+        adayKarisimlar ← OLASI_KOMBİNASYONLAR(renkListesi, maxKarisimSayisi)
+        FOR her karisim IN adayKarisimlar:
+            oranlar ← NORMALIZE_RANDOM_ORANLAR(maxKarisimSayisi)
+            karisikRenk ← KARISTIR_N_RENK(karisim, oranlar)
+            hata ← HATA_HESAPLA(karisikRenk, hedef)
+            
+            # --- Optimizasyon kontrolü ---
+            IF hata < enKucukHata THEN
+                enKucukHata ← hata
+                enIyiKarisim ← (karisim, oranlar)
+            
+            # --- Erken durma koşulu ---
+            IF hata < hataEşiği THEN
+                BREAK
+        END FOR
+
+        # --- Oran aralığını daralt ---
+        oranAraligi ← oranAraligi / 2
+    END FOR
+
+ADIM 4: Sonuç
+    YAZ "En iyi karışım:", enIyiKarisim
+    YAZ "Hedef renk farkı:", enKucukHata
