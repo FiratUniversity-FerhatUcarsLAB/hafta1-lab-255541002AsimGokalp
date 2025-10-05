@@ -1,4 +1,32 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 25541002
+AD-SOYAD: ASIM GÖKALP
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+Görev-5 kendi ilgi alanınızda bir problem seçin.
+ALGORITMA: SMARTDAY_PLANLAMA
+
+Girdi:
+    görevListesi[], uykuSüresi, havaDurumu, trafikYoğunluğu, enerjiSeviyesi
+Çıktı:
+    optimizeEdilmisPlan[]
+
+ADIM 1: Görevleri kategorilere ayır
+    zorunlu, kısa, esnek ← SINIFLANDIR(görevListesi)
+
+ADIM 2: Görevleri önem skoruna göre sırala
+    skor ← α*öncelik + β*süre + γ*enerjiUyumu
+
+ADIM 3: Hava ve trafik verilerini uygula
+    FOR görev IN görevListesi:
+        IF görev.tip == "açık hava" AND havaDurumu == "yağmur":
+            görev.saat ← öğleden sonra
+        IF görev.konum == "şehir merkezi" AND trafikYoğunluğu > 0.8:
+            görev.saat ← alternatif zaman
+
+ADIM 4: Günlük enerji takvimi oluştur
+    enerjiProfil ← ENERJI_TAHMINI(uykuSüresi)
+    ZOR görevleri enerjiProfil.pikSaatlerine ata
+
+ADIM 5: Planı oluştur
+    optimizeEdilmisPlan ← görevListesi sıralı hali
+    YAZ "Günün planı hazır:", optimizeEdilmisPlan
